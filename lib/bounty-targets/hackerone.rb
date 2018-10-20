@@ -134,22 +134,13 @@ module BountyTargets
     end
 
     def uris
-      uris = scan.flat_map do |program|
+      scan.flat_map do |program|
         program['targets']['in_scope']
       end.select do |scope|
         scope['asset_type'] == 'URL'
       end.map do |scope|
         scope['asset_identifier']
       end
-
-      # Handle Yahoo's unusual usage of scopes
-      yahoo_uris = scan.find do |program|
-        program[:handle] == 'yahoo'
-      end['targets']['in_scope'].flat_map do |scope|
-        URI.extract(scope['instruction'].scan(/\(([^)]*)\)/).flatten.join(' '))
-      end
-
-      uris + yahoo_uris
     end
   end
 end
